@@ -1,10 +1,11 @@
 # run as admin for tor service to work
+# pip install requests requests[socks]
 import requests, datetime, subprocess
 
 def newIdentity():
 	stop = subprocess.run("tor --service stop", capture_output=True)
 	start = subprocess.run("tor --service start", capture_output=True)
-	
+
 	if " success" in start.stdout.decode():
 		return True
 
@@ -21,8 +22,10 @@ def main():
 
 	a = datetime.datetime.now()
 	for i in range(10):
-		print(newIdentity(), end=" ")
-		print(s.get("http://icanhazip.com").text)
+		if newIdentity():
+			print(s.get("http://icanhazip.com").text)
+		else:
+			exit()
 
 	secs = round((datetime.datetime.now()-a).total_seconds(), 2)
 	print("Seconds:", secs)
